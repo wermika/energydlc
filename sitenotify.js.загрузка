@@ -1,0 +1,115 @@
+Toaster = function() {
+
+  Toaster.amount = 0;
+
+  Toaster.default = {
+      color: '#F44236',
+      autoClose: true,
+      autoCloseDelay: 2000,
+      position: 'right-top'
+  };
+
+  function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+  
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+  
+    try {
+      var successful = document.execCommand('copy');
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+  
+    document.body.removeChild(textArea);
+  }
+
+  function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+    }, function(err) {
+      console.error('Async: Could not copy text: ', err);
+    });
+  }
+
+  Toaster.toasterror = function(m, options = Toaster.default){
+    if($('#toast-'+Toaster.amount).length) Toaster.dismiss('#toast-'+Toaster.amount);
+    Toaster.amount++;
+
+    var id = 'toast-'+Toaster.amount;
+    var selector = '#'+id;
+    $toast = $('<div class="toaster"></div>').attr('id',id).text(m).css({'background': options.color || Toaster.default.color}).addClass('toaster-'+(options.position || Toaster.default.position));
+    $('body').append($toast);
+    setTimeout(function(){
+        $(selector).addClass('toasting');
+    }, 1);
+
+    $(selector).click(function(){
+        if(options.onClick) options.onClick();
+        Toaster.dismiss(selector);
+    });
+
+    var autoClose=Toaster.default.autoClose;
+    if(options.autoClose!==undefined) autoClose=options.autoClose;
+    if(autoClose) {
+        setTimeout(function(){
+            Toaster.dismiss(selector);
+        }, options.autoCloseDelay || Toaster.default.autoCloseDelay);
+    }
+}
+
+  Toaster.toast = function(m, options = Toaster.default){
+      if($('#toast-'+Toaster.amount).length) Toaster.dismiss('#toast-'+Toaster.amount);
+      Toaster.amount++;
+
+      var id = 'toast-'+Toaster.amount;
+      var selector = '#'+id;
+      $toast = $('<div class="toaster"></div>').attr('id',id).text(m).css({'background': options.color || Toaster.default.color}).addClass('toaster-'+(options.position || Toaster.default.position));
+      $('body').append($toast);
+      setTimeout(function(){
+          $(selector).addClass('toasting');
+      }, 1);
+
+      copyTextToClipboard(options.userkey);
+
+      $(selector).click(function(){
+          if(options.onClick) options.onClick();
+          Toaster.dismiss(selector);
+      });
+
+      var autoClose=Toaster.default.autoClose;
+      if(options.autoClose!==undefined) autoClose=options.autoClose;
+      if(autoClose) {
+          setTimeout(function(){
+              Toaster.dismiss(selector);
+          }, options.autoCloseDelay || Toaster.default.autoCloseDelay);
+      }
+  }
+
+  Toaster.send = Toaster.toast; //for downward compatibility
+
+  Toaster.error = function(m, options) {
+      Toaster.default.color='#F44236';
+      Toaster.toasterror(m, options);
+      Toaster.default.color='#C5C56A';
+  }
+
+  Toaster.dismiss = function(toast) {
+      $(toast).removeClass('toasting').addClass('toast-dismissed');
+      setTimeout(function(){
+          $(toast).remove();
+      }, 1000);
+  }
+};
+
+new Toaster();
