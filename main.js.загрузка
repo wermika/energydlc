@@ -7,12 +7,12 @@ window.addEventListener('load', function () {
 
 // scroll settings
 SmoothScroll({
-    animationTime    : 1000,
+    animationTime    : 850,
     stepSize         : 75,
-    accelerationDelta : 30,  
+    accelerationDelta : 35,  
     accelerationMax   : 2,   
     keyboardSupport   : true,  
-    arrowScroll       : 50,
+    arrowScroll       : 60,
     pulseAlgorithm   : true,
     pulseScale       : 4,
     pulseNormalize   : 1,
