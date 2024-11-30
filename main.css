@@ -368,9 +368,9 @@ a {
   color: white;
   font-size: 16;
   text-decoration: none;
-  width: 200;
-  height: 32px;
-  border-radius: 10px;
+  width: 220px;
+  height: 38px;
+  border-radius: 1px;
   background-color: transparent;
   display: flex;
   align-items: center;
